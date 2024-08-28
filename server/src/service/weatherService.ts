@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import dayjs, { type Dayjs } from 'dayjs';
-import { response } from 'express';
 dotenv.config();
 
 interface Coordinates {
