@@ -31,13 +31,15 @@ class WeatherService {
   private apiKey?: string;
   private city = ""
 
-  constructur() {
+  constructor() {
     this.baseURL = process.env.API_BASE_URL || "";
     this.apiKey = process.env.API_KEY || "";
   }
 
   private async fetchLocationData(query: string) {
     try {
+      console.log(this.baseURL);
+      console.log(this.apiKey);
       if (!this.baseURL || !this.apiKey) {
         throw new Error("Invalid API URL or Key");
       }
@@ -67,12 +69,12 @@ class WeatherService {
 
 
   private buildGeocodeQuery(): string {
-    const geocodeQuery = `${this.baseURL}geo/1.0/direct?q=${this.city}&limit=1&appid=${this.apiKey}`;
+    const geocodeQuery = `${this.baseURL}/geo/1.0/direct?q=${this.city}&limit=1&appid=${this.apiKey}`;
     return geocodeQuery;
   }
   // TODO: Create buildWeatherQuery method
   private buildWeatherQuery(coordinates: Coordinates): string {
-    const weatherQuery = `${this.baseURL}data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apiKey}&units=imperial&appid=${this.apiKey}`;
+    const weatherQuery = `${this.baseURL}/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${this.apiKey}&units=imperial`;
     return weatherQuery;
   }
 
@@ -113,7 +115,7 @@ class WeatherService {
 
   private buildForecastArray(currentWeather: Weather, weatherData: any[]) {
     const weatherForecast: Weather[] = [currentWeather];
-    const filteredWeatherData = weatherData.filter((data: any) => { data.dt_txt.includes("12:00:00") });
+    const filteredWeatherData = weatherData.filter((data: any) => { return data.dt_txt.includes("12:00:00") });
 
     for (const day of filteredWeatherData) {
       weatherForecast.push(new Weather(this.city, dayjs.unix(day.dt).format("MM/DD/YYYY"), day.main.temp, day.wind.speed, day.main.humidity, day.weather[0].icon, day.weather[0].description || day.weather[0].main));
