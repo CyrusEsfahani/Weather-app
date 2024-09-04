@@ -14,11 +14,11 @@ class City {
 
 class HistoryService {
   private async read() {
-    return await fs.readFile("db.json", "utf-8");
+    return await fs.readFile("db/db.json", "utf-8");
   }
 
   private async write(cities: City[]) {
-    return await fs.writeFile("db.json", JSON.stringify(cities, null, 2));
+    return await fs.writeFile("db/db.json", JSON.stringify(cities, null, 2));
   }
  
   async getCities() {
@@ -49,7 +49,12 @@ class HistoryService {
       .then(() => newCity);
   }
   // * BONUS TODO: Define a removeCity method that removes a city from the searchHistory.json file
-  // async removeCity(id: string) {}
+  async removeCity(id: string) {
+    return await this.getCities().then(cities => {
+      const updatedCities = cities.filter(city => city.id !== id);
+      return this.write(updatedCities);
+    });
+  }
 }
 
 export default new HistoryService();
